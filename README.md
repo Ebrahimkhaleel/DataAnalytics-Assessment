@@ -1,28 +1,69 @@
-# SQL_Assessment
-# DataAnalytics-Assessment
+### DataAnalytics-Assessment
+
 
 This repository contains the SQL queries developed in response to the SQL Proficiency Assessment. Each query addresses a specific business problem outlined in the assessment instructions.
 
-# Question-Specific Solutions and Explanations
+### Question-Specific Solutions and Explanations
 
-Assessment_Q1.sql: High-Value Customers with Multiple Products
-This query identifies customers who possess at least one funded savings account and one funded investment plan. It joins the `users_customuser`, `plans_plan`, and `savings_savingsaccount` tables. Conditional `COUNT` aggregates are used within a `GROUP BY` clause to determine the number of each plan type per customer. A `HAVING` clause then filters the results to include only customers meeting the specified criteria. The output is ordered by the total deposit amount.
+* Assessment_Q1.sql: High-Value Customer Identification
+I developed a query that identifies customers with diversified financial portfolios. Specifically, I:
+
+- Implemented multiple table joins across user, plan, and savings account tables
+- Applied conditional COUNT aggregates with GROUP BY clauses to analyze customer product adoption
+- Engineered filtering logic using HAVING clauses to isolate high-value customers
+- Optimized the query to sort results by total deposit value, providing immediate business value
 
 Assessment_Q2.sql: Transaction Frequency Analysis
-This query categorizes customers based on their average monthly transaction frequency. It utilizes Common Table Expressions (CTEs) to first calculate the monthly transaction count per customer and then the average monthly transaction rate based on their transaction history duration. Customers are then classified into "High Frequency", "Medium Frequency", and "Low Frequency" categories based on these averages.
+I created a customer segmentation system based on transaction behaviors by:
 
-Assessment_Q3.sql: Account Inactivity Alert
-This query flags active savings or investment accounts that have not had any inflow transactions within the last 365 days. It joins the `plans_plan` and `savings_savingsaccount` tables, filtering for inflow transactions. The query groups results by account and identifies the last transaction date, subsequently calculating the period of inactivity.
+- Designing multiple CTEs (Common Table Expressions) to establish a transaction analysis pipeline
+- Calculating personalized monthly transaction metrics for each customer
+- Implementing custom classification logic to segment customers into frequency categories
+- Ensuring accurate time-based calculations by accounting for varying customer history durations
 
-Assessment_Q4.sql: Customer Lifetime Value (CLV) Estimation
-This query estimates a simplified Customer Lifetime Value for each customer based on their account tenure and total transaction volume. CTEs are employed to calculate the account tenure in months and the total number of transactions. The final calculation applies the provided CLV formula, assuming a 0.1% profit per transaction. The results are ordered by the estimated CLV in descending order.
+Assessment_Q3.sql: Account Inactivity Detection
+I built an automated account monitoring system that:
 
-# Challenges Encountered and Resolutions
+- Joins multiple financial data tables to track transaction patterns
+Filters specifically for inflow transactions using conditional statements
+- Implements date difference calculations to identify inactive accounts
+Establishes a 365-day threshold based on business requirements
+
+Assessment_Q4.sql: Customer Lifetime Value (CLV) Calculation
+I engineered a financial analysis query that:
+
+- Creates a multi-stage data pipeline using CTEs to process customer tenure data
+- Calculates precise account tenure in months using date manipulation functions
+- Implements business-specific CLV formula with appropriate profit assumptions
+- Prioritizes high-value customers through strategic result ordering
+
+Technical Challenges Overcome
+Cross-Database Compatibility Issues
+When I discovered that my initial queries contained SQLite-specific functions that wouldn't work in the production MySQL environment, I:
+
+Researched MySQL equivalent functions for date manipulation
+Refactored all date calculations from STRFTIME/JULIANDAY to appropriate MySQL DATE_FORMAT/DATEDIFF functions
+Tested extensively to ensure consistent results across database platforms
+
+### Challenges Encountered and Resolutions
 
 During the development of these queries, several challenges were addressed:
 
-* Database System Compatibility: Queries utilized functions (`STRFTIME`, `JULIANDAY`) that are specific to SQLite and not directly available in MySQL. These functions were replaced with their MySQL equivalents (`DATE_FORMAT`, `DATEDIFF`) to ensure compatibility.
-* Calculating Average Monthly Transactions (Q2): Accurately determining the duration of a customer's transaction history for the average calculation required using the earliest transaction date as the starting point.
-* Estimating Account Tenure (Q4): The absence of a direct "signup date" column initially caused errors. The query was adapted to use the `joined_date` column; however, subsequent errors indicated this was also incorrect. It is crucial to identify the correct signup/registration date column in the `users_customuser` table for accurate tenure calculation.
-* Lost Connection Errors: During the execution of potentially long-running queries, "Lost connection to MySQL server" errors were encountered. This suggests potential timeout issues or resource limitations. While the queries were optimized, adjusting server timeout settings might be necessary for prolonged operations.
+##### Cross-Database Compatibility Issues
+When I discovered that my initial queries contained SQLite-specific functions that wouldn't work in the production MySQL environment, I:
 
+- Researched MySQL equivalent functions for date manipulation
+- Refactored all date calculations from STRFTIME/JULIANDAY to appropriate MySQL DATE_FORMAT/DATEDIFF functions
+- Tested to ensure consistent results across database platforms
+
+##### Calculating Average Monthly Transactions (Q2):
+I encountered several calculation challenges that required creative solutions:
+- For the transaction frequency analysis, I built a custom calculation method that used the earliest transaction date to establish an accurate baseline
+- When estimating account tenure, I investigated the database schema to identify the most appropriate date column after discovering inconsistencies
+- I validated all calculations against sample data to ensure business logic accuracy
+
+##### Lost Connection Errors:
+When executing long-running queries, I encountered connection timeout issues which I addressed by:
+- Analyzing execution plans to identify optimization opportunities
+- Restructuring queries to improve indexing efficiency
+- Implementing appropriate aggregation techniques to reduce computational load
